@@ -148,8 +148,19 @@
             });
         }
         function searchTests() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = data.filter(test => String(test['Chemistry And Hormones']).toLowerCase().includes(query) || String(test['Sample type']).toLowerCase().includes(query));
+            const queryText = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            // تقسيم كلمات البحث للسماح بالبحث المتعدد
+            const searchWords = queryText.split(/\s+/);
+            
+            const filtered = data.filter(test => {
+                // تجميع النصوص المراد البحث فيها (اسم التحليل، نوع العينة، والتوفر)
+                const searchableText = String(test['Chemistry And Hormones'] + " " + test['Sample type'] + " " + test['Availability']).toLowerCase();
+                
+                // التحقق من أن جميع الكلمات المكتوبة موجودة في النص
+                return searchWords.every(word => searchableText.includes(word));
+            });
+            
             renderCards(filtered);
         }
         renderCards(data);
